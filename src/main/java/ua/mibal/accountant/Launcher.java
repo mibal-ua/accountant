@@ -17,13 +17,34 @@
 
 package ua.mibal.accountant;
 
+
+
+import ua.mibal.accountant.component.Account;
+import ua.mibal.accountant.component.DataPrinter;
+import ua.mibal.accountant.component.FileParser;
+import ua.mibal.accountant.component.InputReader;
+import ua.mibal.accountant.console.ConsoleDataPrinter;
+import ua.mibal.accountant.console.ConsoleInputReader;
+import ua.mibal.accountant.model.Request;
+
+
+import static java.lang.System.getProperty;
+
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
 public class Launcher {
 
+    static DataPrinter dataPrinter = new ConsoleDataPrinter();
+
+    static FileParser fileParser = new FileParser();
+
+    static InputReader inputReader = new ConsoleInputReader(dataPrinter);
+
     public static void main(String[] args) {
-        // Add code here
+        Account account = new Account("name", fileParser);
+        Request request = inputReader.read();
+        dataPrinter.print(account.getData(request));
     }
 }
