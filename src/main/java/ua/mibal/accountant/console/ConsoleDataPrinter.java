@@ -25,7 +25,12 @@ import ua.mibal.accountant.component.DataPrinter;
 public class ConsoleDataPrinter implements DataPrinter {
 
     @Override
-    public void print(final String message) {
-        //System.out.println(message);
+    public void printInfoMessage(final String message) {
+        System.out.println(message);
+    }
+
+    @Override
+    public void printErrorMessage(final String message) {
+        System.err.println(message);
     }
 }
