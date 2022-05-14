@@ -55,6 +55,10 @@ public class CommandLineArgumentParser {
     public static class CommandLineArguments {
         ProgramMode programMode;
 
+        public ProgramMode getProgramMode() {
+            return programMode;
+        }
+
         public CommandLineArguments(final ProgramMode programMode) {
             this.programMode = programMode;
         }
