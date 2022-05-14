@@ -22,5 +22,7 @@ package ua.mibal.accountant.component;
  */
 public interface DataPrinter {
 
-    void print(String message);
+    void printInfoMessage(String message);
+
+    void printErrorMessage(String message);
 }
