@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ua.mibal.accountant.console.config;
+package ua.mibal.accountant.component.config;
 
 import ua.mibal.accountant.model.ProgramMode;
 
