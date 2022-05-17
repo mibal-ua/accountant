@@ -19,16 +19,9 @@ package ua.mibal.accountant;
 
 
 
-import ua.mibal.accountant.component.Account;
-import ua.mibal.accountant.component.DataPrinter;
-import ua.mibal.accountant.component.FileParser;
-import ua.mibal.accountant.component.InputReader;
-import ua.mibal.accountant.console.ConsoleDataPrinter;
-import ua.mibal.accountant.console.ConsoleInputReader;
+import ua.mibal.accountant.component.*;
+import ua.mibal.accountant.component.console.ConsoleDataPrinter;
 import ua.mibal.accountant.model.Request;
-
-
-import static java.lang.System.getProperty;
 
 /**
  * @author Michael Balakhon
@@ -36,15 +29,8 @@ import static java.lang.System.getProperty;
  */
 public class Launcher {
 
-    static DataPrinter dataPrinter = new ConsoleDataPrinter();
-
-    static FileParser fileParser = new FileParser();
-
-    static InputReader inputReader = new ConsoleInputReader(dataPrinter);
-
     public static void main(String[] args) {
-        Account account = new Account("name", fileParser);
-        Request request = inputReader.read();
-        dataPrinter.print(account.getData(request));
+        RequestFactory requestFactory = new RequestFactory(args);
+        requestFactory.create();
     }
 }
