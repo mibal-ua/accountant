@@ -19,13 +19,13 @@ package ua.mibal.accountant.component.config;
 import ua.mibal.accountant.model.ProgramMode;
 
 import static ua.mibal.accountant.model.ProgramMode.GET;
-import static ua.mibal.accountant.model.ProgramMode.POST;
+import static ua.mibal.accountant.model.ProgramMode.ADD;
 
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
-public class CommandLineArgumentParser {
+public class CommandLineArgumentParser implements ArgumentParser {
 
     private final String[] args;
 
@@ -33,14 +33,15 @@ public class CommandLineArgumentParser {
         this.args = args;
     }
 
-    public CommandLineArguments parse() {
+    @Override
+    public Arguments parse() {
         ProgramMode programMode = null;
         for (final String arg : args) {
-            if (POST.name().equalsIgnoreCase(arg) || GET.name().equalsIgnoreCase(arg)) {
+            if (ADD.name().equalsIgnoreCase(arg) || GET.name().equalsIgnoreCase(arg)) {
                 if (programMode == null) {
                     programMode = ProgramMode.valueOf(arg.toUpperCase());
                 } else {
-                    System.err.printf("Invalid command line argument: '%s', because level already set: '%s'.%n",
+                    System.err.printf("Invalid command line argument: '%s', because mode of program already set: '%s'.%n",
                             arg, programMode
                     );
                 }
@@ -49,18 +50,6 @@ public class CommandLineArgumentParser {
         if (programMode == null) {
             programMode = GET;
         }
-        return new CommandLineArguments(programMode);
-    }
-
-    public static class CommandLineArguments {
-        ProgramMode programMode;
-
-        public ProgramMode getProgramMode() {
-            return programMode;
-        }
-
-        public CommandLineArguments(final ProgramMode programMode) {
-            this.programMode = programMode;
-        }
+        return new Arguments(programMode);
     }
 }
