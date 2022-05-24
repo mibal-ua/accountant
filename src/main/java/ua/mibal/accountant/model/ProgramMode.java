@@ -24,5 +24,5 @@ public enum ProgramMode {
 
     GET,
 
-    POST
+    ADD
 }
