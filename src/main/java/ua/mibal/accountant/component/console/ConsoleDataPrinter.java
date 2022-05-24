@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ua.mibal.accountant.console;
+package ua.mibal.accountant.component.console;
 
 import ua.mibal.accountant.component.DataPrinter;
 

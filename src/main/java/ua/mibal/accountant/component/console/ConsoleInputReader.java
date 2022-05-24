@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package ua.mibal.accountant.console;
+package ua.mibal.accountant.component.console;
 
 import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
-import ua.mibal.accountant.model.Request;
 
 import java.util.Scanner;
 
@@ -28,18 +27,8 @@ import java.util.Scanner;
  */
 public class ConsoleInputReader implements InputReader {
 
-    private DataPrinter dataPrinter;
-
-    public ConsoleInputReader(final DataPrinter dataPrinter) {
-        this.dataPrinter = dataPrinter;
-    }
-
     @Override
-    public Request read() {
-        /*dataPrinter.print("Enter commands:");
-        String input = new Scanner(System.in).nextLine();
-
-         */
-        return null;
+    public String read() {
+        return new Scanner(System.in).nextLine().trim();
     }
 }
