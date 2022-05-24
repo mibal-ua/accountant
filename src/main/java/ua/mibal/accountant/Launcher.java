@@ -20,8 +20,6 @@ package ua.mibal.accountant;
 
 
 import ua.mibal.accountant.component.*;
-import ua.mibal.accountant.component.console.ConsoleDataPrinter;
-import ua.mibal.accountant.model.Request;
 
 /**
  * @author Michael Balakhon
@@ -30,7 +28,7 @@ import ua.mibal.accountant.model.Request;
 public class Launcher {
 
     public static void main(String[] args) {
-        RequestFactory requestFactory = new RequestFactory(args);
-        requestFactory.create();
+        Accountant accountant = new Accountant(args);
+        accountant.create();
     }
 }
