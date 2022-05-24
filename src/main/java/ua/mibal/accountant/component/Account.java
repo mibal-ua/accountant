@@ -18,7 +18,6 @@ package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Commit;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -31,14 +30,14 @@ public class Account {
 
     private final String path;
 
-    private final DataTXTParser dataTXTParser;
+    private final TXTDataParser txtDataParser;
 
     private Commit[] lastCommits;
 
-    public Account(final String name, DataPrinter dataPrinter) {
+    public Account(final String name) {
         this.name = name;
         path = "/Users/" + System.getProperty("user.name") + "/" + name + ".txt";
-        dataTXTParser = new DataTXTParser(dataPrinter);
+        txtDataParser = new TXTDataParser();
         lastCommits = null;
     }
 
@@ -51,13 +50,13 @@ public class Account {
     }
 
     public void add(final Commit commitToAdd) throws IOException {
-        dataTXTParser.add(this, commitToAdd);
+        txtDataParser.add(this, commitToAdd);
         lastCommits = null;
     }
 
     public Commit[] getCommits() throws IOException{
         if (lastCommits == null) {
-            lastCommits = dataTXTParser.getCommits(this).clone();
+            lastCommits = txtDataParser.getCommits(this).clone();
         }
         return lastCommits.clone();
     }

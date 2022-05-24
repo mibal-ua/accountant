@@ -61,7 +61,7 @@ public class Accountant {
                     "Program mode have illegal argument '%s'.", programMode.name()));
         }
         //TODO many accounts
-        Account account = new Account("name", dataPrinter);
+        Account account = new Account("name");
         request.make(account);
 
         System.out.println("Press any key to continue...");

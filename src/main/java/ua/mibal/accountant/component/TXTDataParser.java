@@ -27,20 +27,12 @@ import java.util.Scanner;
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
-public class DataTXTParser {
+public class TXTDataParser implements DataParser {
 
-
-    private final DataPrinter dataPrinter;
-
-    public DataTXTParser(final DataPrinter dataPrinter) {
-        this.dataPrinter = dataPrinter;
-    }
-
+    @Override
     public Commit[] getCommits(final Account account) throws IOException {
 
-
         File myObj = new File(account.getPATH());
-
 
         //count lines
         Scanner scanner = new Scanner(myObj);
@@ -87,6 +79,7 @@ public class DataTXTParser {
         return '1' <= ch && ch <= '9';
     }
 
+    @Override
     public void add(final Account account, final Commit commitToAdd) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         Commit[] commits = getCommits(account);
