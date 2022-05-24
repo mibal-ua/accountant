@@ -16,7 +16,10 @@
 
 package ua.mibal.accountant.component;
 
-import ua.mibal.accountant.model.Request;
+import ua.mibal.accountant.model.Commit;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author Michael Balakhon
@@ -24,20 +27,38 @@ import ua.mibal.accountant.model.Request;
  */
 public class Account {
 
-    private static String name;
+    private final String name;
 
-    private static String PATH;
+    private final String path;
 
-    private static FileParser fileParser;
+    private final DataTXTParser dataTXTParser;
 
-    public Account(final String name, final FileParser fileParser) {
-        Account.name = name;
-        PATH = System.getProperty("user.name") + "/" + name + ".txt";
-        Account.fileParser = fileParser;
+    private Commit[] lastCommits;
+
+    public Account(final String name, DataPrinter dataPrinter) {
+        this.name = name;
+        path = "/Users/" + System.getProperty("user.name") + "/" + name + ".txt";
+        dataTXTParser = new DataTXTParser(dataPrinter);
+        lastCommits = null;
     }
 
-    public String getData(final Request request) {
+    public final String getPATH() {
+        return path;
+    }
 
-        return null;
+    public final String getName() {
+        return name;
+    }
+
+    public void add(final Commit commitToAdd) throws IOException {
+        dataTXTParser.add(this, commitToAdd);
+        lastCommits = null;
+    }
+
+    public Commit[] getCommits() throws IOException{
+        if (lastCommits == null) {
+            lastCommits = dataTXTParser.getCommits(this).clone();
+        }
+        return lastCommits.clone();
     }
 }
