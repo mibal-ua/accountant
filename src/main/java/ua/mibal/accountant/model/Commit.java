@@ -14,11 +14,41 @@
  * limitations under the License.
  */
 
-package ua.mibal.accountant.component;
+package ua.mibal.accountant.model;
 
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
-public class FileParser {
+public class Commit {
+
+    private final String content;
+
+    private final String time;
+
+    private final String name;
+
+    public Commit(final String time, final String name, final String data) {
+        this.time = time;
+        this.name = name;
+        this.content = data;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return time + " | " + name + '\n' +
+               content + '\n';
+    }
 }
