@@ -16,7 +16,15 @@
 
 package ua.mibal.accountant.model;
 
-import ua.mibal.accountant.model.Request;
+import ua.mibal.accountant.component.Account;
+import ua.mibal.accountant.component.DataPrinter;
+import ua.mibal.accountant.component.InputReader;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static java.lang.String.format;
 
 /**
  * @author Michael Balakhon
@@ -24,4 +32,47 @@ import ua.mibal.accountant.model.Request;
  */
 public class PostRequest implements Request {
 
+    private final DataPrinter dataPrinter;
+
+    private final String name;
+
+    private final String time;
+
+    private final String data;
+
+    public PostRequest(final InputReader inputReader, final DataPrinter dataPrinter) {
+        String name = "";
+        String data = "";
+        while (name.equals("")) {
+            dataPrinter.printInfoMessage("Enter name of new commit:");
+            name = inputReader.read().trim();
+        }
+        while (data.equals("")) {
+            dataPrinter.printInfoMessage("Enter data of new commit:");
+            data = inputReader.read().trim();
+        }
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+
+        this.dataPrinter = dataPrinter;
+        this.time = dtf.format(now);
+        this.name = name;
+        this.data = data;
+    }
+
+    @Override
+    public void make(final Account account) {
+        try {
+            account.add(new Commit(time, name, data));
+            dataPrinter.printInfoMessage("Commit successfully added.");
+        } catch (IOException e) {
+            dataPrinter.printInfoMessage("Commit doesn't added.");
+            dataPrinter.printErrorMessage(format(
+                    "Account file '%s' does not exists or renamed. Current name:%s",
+                    account.getPATH(), account.getName()
+            ));
+            e.printStackTrace();
+        }
+    }
 }
