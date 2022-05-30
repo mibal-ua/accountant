@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package ua.mibal.accountant.component;
+package ua.mibal.accountant.model;
 
+import ua.mibal.accountant.component.TXTDataParser;
 import ua.mibal.accountant.model.Commit;
 
 import java.io.IOException;

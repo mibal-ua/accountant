@@ -16,6 +16,7 @@
 
 package ua.mibal.accountant.component;
 
+import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
 
 import java.io.IOException;

@@ -16,7 +16,6 @@
 
 package ua.mibal.accountant.model;
 
-import ua.mibal.accountant.component.Account;
 import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
 

@@ -16,11 +16,6 @@
 
 package ua.mibal.accountant.model;
 
-import ua.mibal.accountant.component.Account;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua

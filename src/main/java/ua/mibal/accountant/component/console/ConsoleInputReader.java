@@ -26,7 +26,6 @@ import java.util.Scanner;
  * @link http://t.me/mibal_ua
  */
 public class ConsoleInputReader implements InputReader {
-
     @Override
     public String read() {
         return new Scanner(System.in).nextLine().trim();
