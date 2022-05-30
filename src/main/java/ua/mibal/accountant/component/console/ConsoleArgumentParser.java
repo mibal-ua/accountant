@@ -41,7 +41,7 @@ public class ConsoleArgumentParser implements ArgumentParser {
     }
 
     @Override
-    public Arguments parse() {
+    public Arguments parse(String[] args) {
         ProgramMode programMode;
         while (true) {
             dataPrinter.printInfoMessage("Enter program mode (get/add):");

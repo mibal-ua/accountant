@@ -22,5 +22,5 @@ package ua.mibal.accountant.component.config;
  */
 public interface ArgumentParser {
 
-    Arguments parse();
+    Arguments parse(String[] args);
 }

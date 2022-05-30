@@ -26,15 +26,8 @@ import static ua.mibal.accountant.model.ProgramMode.ADD;
  * @link http://t.me/mibal_ua
  */
 public class CommandLineArgumentParser implements ArgumentParser {
-
-    private final String[] args;
-
-    public CommandLineArgumentParser(final String[] args) {
-        this.args = args;
-    }
-
     @Override
-    public Arguments parse() {
+    public Arguments parse(final String[] args) {
         ProgramMode programMode = null;
         for (final String arg : args) {
             if (ADD.name().equalsIgnoreCase(arg) || GET.name().equalsIgnoreCase(arg)) {
