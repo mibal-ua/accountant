@@ -18,6 +18,7 @@ package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
+import ua.mibal.accountant.model.sctructure.DynaCommitArray;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,27 +35,13 @@ public class TXTDataParser implements DataParser {
     public Commit[] getCommits(final Account account) throws IOException {
 
         File myObj = new File(account.getPATH());
-
-        //count lines
         Scanner scanner = new Scanner(myObj);
 
-        int count = 0;
-        while (scanner.hasNextLine()) {
-            String string = scanner.nextLine();
-            count++;
-        }
-
-
-        //add commits
-        Commit[] commits = new Commit[count / 2];
-
-        scanner = new Scanner(myObj);
-        int subCount = 0;
+        DynaCommitArray commits = new DynaCommitArray();
         String line;
         String time = null;
         String name = null;
-        //TODO must create DynaCommit array
-        for (int i = 0; i < count; i++) {
+        while (scanner.hasNextLine()) {
             line = scanner.nextLine();
             if (isNumber(line.charAt(0))) {
                 StringBuilder str = new StringBuilder();
@@ -69,11 +56,11 @@ public class TXTDataParser implements DataParser {
                 }
                 name = str.toString().trim();
             } else {
-                commits[subCount++] = new Commit(time, name, line);
+                commits.add(new Commit(time, name, line));
             }
         }
         scanner.close();
-        return commits.clone();
+        return commits.asArray();
     }
 
     private boolean isNumber(final char ch) {
