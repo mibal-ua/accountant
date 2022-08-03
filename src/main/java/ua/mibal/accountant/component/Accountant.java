@@ -16,22 +16,7 @@
 
 package ua.mibal.accountant.component;
 
-import ua.mibal.accountant.component.config.Arguments;
-import ua.mibal.accountant.component.config.CommandLineArgumentParser;
-import ua.mibal.accountant.component.console.ConsoleArgumentParser;
-import ua.mibal.accountant.component.console.ConsoleDataPrinter;
-import ua.mibal.accountant.component.console.ConsoleInputReader;
-import ua.mibal.accountant.model.GetRequest;
-import ua.mibal.accountant.model.PostRequest;
-import ua.mibal.accountant.model.ProgramMode;
-import ua.mibal.accountant.model.Request;
-
-import java.io.IOException;
-import java.util.Scanner;
-
-import static java.lang.String.format;
-import static ua.mibal.accountant.model.ProgramMode.GET;
-import static ua.mibal.accountant.model.ProgramMode.ADD;
+import ua.mibal.accountant.model.Account;
 
 /**
  * @author Michael Balakhon
@@ -39,32 +24,100 @@ import static ua.mibal.accountant.model.ProgramMode.ADD;
  */
 public class Accountant {
 
-    final ProgramMode programMode;
+    Account[] accounts;
 
-    final DataPrinter dataPrinter = new ConsoleDataPrinter();
+    final DataPrinter dataPrinter;
 
-    final InputReader inputReader = new ConsoleInputReader();
+    final InputReader inputReader;
 
-    public Accountant(final String[] args) {
-        final Arguments arguments = new ConsoleArgumentParser(dataPrinter, inputReader).parse();
-        this.programMode = arguments.getProgramMode();
+    final DataParser dataParser;
+
+    public Accountant(final DataPrinter dataPrinter, final InputReader inputReader, final DataParser dataParser) {
+        this.dataPrinter = dataPrinter;
+        this.inputReader = inputReader;
+        this.dataParser = dataParser;
+
+        accounts = getAccountsFromList();
     }
 
-    public void create() {
-        Request request;
-        if (programMode == GET) {
-            request = new GetRequest(inputReader, dataPrinter);
-        } else if (programMode == ADD) {
-            request = new PostRequest(inputReader, dataPrinter);
-        } else {
-            throw new IllegalArgumentException(format(
-                    "Program mode have illegal argument '%s'.", programMode.name()));
-        }
-        //TODO many accounts
-        Account account = new Account("name");
-        request.make(account);
+    private Account[] getAccountsFromList() {
+        return dataParser.getAccountsFromList();
+    }
 
-        System.out.println("Press any key to continue...");
-        new Scanner(System.in).nextLine();
+    public Account getCurrentAccount() {
+        Account desiredAccount = null;
+        if (accounts == null || accounts.length == 0) {
+            dataPrinter.printInfoMessage("""
+                    There are no accounts. You can create new.
+                    Enter name of a new account:""");
+            String name;
+            while (true) {
+                name = inputReader.read().trim();
+                if (name.length() < 3) {
+                    dataPrinter.printInfoMessage("""
+                            Name must contain 3 and more characters.
+                            Enter name:""");
+                } else {
+                    break;
+                }
+            }
+            desiredAccount = new Account(name, dataParser);
+            addAccountToAccountList(desiredAccount);
+        } else {
+            boolean isFind = false;
+            String name = "";
+            while (!isFind) {
+                if(name.equals("")){
+                    dataPrinter.printInfoMessage("Enter name of Account");
+                    name = inputReader.read().trim();
+                }
+                for (final Account account : accounts) {
+                    if (name.equals(account.getName())) {
+                        desiredAccount = account;
+                        isFind = true;
+                        break;
+                    }
+                }
+                name = "";
+                if (!isFind) {
+                    dataPrinter.printInfoMessage("There are no account with this name. I have the next accounts: " + '\n');
+                    for (final Account account : accounts) {
+                        dataPrinter.printInfoMessage(account.getName());
+                    }
+                    dataPrinter.printInfoMessage('\n' + "If you need to add or create new account, enter '/add'.");
+                    String command = inputReader.read().trim();
+                    if (command.charAt(0) == '/') {
+                        if (command.equalsIgnoreCase("/add")) {
+                            desiredAccount = addNewAccount();
+                            addAccountToAccountList(desiredAccount);
+                            isFind = true;
+                        }
+                    } else {
+                        name = command;
+                    }
+                }
+            }
+        }
+        return desiredAccount;
+    }
+
+    private Account addNewAccount() {
+        String name;
+        while (true) {
+            dataPrinter.printInfoMessage("Enter name of account:");
+            name = inputReader.read().trim();
+            if (name.length() < 3) {
+                dataPrinter.printInfoMessage("Name must contain 3 and more characters.");
+            } else {
+                break;
+            }
+        }
+        return new Account(name, dataParser);
+    }
+
+    private void addAccountToAccountList(final Account account) {
+        if(!dataParser.addAccountToAccountList(account)){
+            dataPrinter.printErrorMessage("Error with adding account to accountList");
+        }
     }
 }
