@@ -40,6 +40,7 @@ public class PostRequest implements Request {
     private final String data;
 
     public PostRequest(final InputReader inputReader, final DataPrinter dataPrinter) {
+        this.dataPrinter = dataPrinter;
         String name = "";
         String data = "";
         while (name.equals("")) {
@@ -49,35 +50,9 @@ public class PostRequest implements Request {
         while (data.equals("")) {
             dataPrinter.printInfoMessage("Enter data of new commit:");
             data = inputReader.read();
-            /*
-            StringBuilder result = new StringBuilder();
-            StringBuilder str;
-            while (true) {
-                System.out.println(1);
-                str = new StringBuilder().append(inputReader.read());
-                if (str.length() != 0) {
-                    if (isNumber(str.charAt(0))) {
-                        dataPrinter.printInfoMessage("Line mustn't contain number '" + str.charAt(0) + "' at the start of line.");
-                    } else if (str.charAt(str.length() - 1) == '\\') {
-                        result.append(str.deleteCharAt(str.length() - 1)).append('\n');
-                    } else {
-                        result.append(str).append('\n');
-                        break;
-                    }
-                } else {
-                    dataPrinter.printInfoMessage("Line must contain any symbol.");
-                }
-            }
-            data = result.toString();
-
-             */
-
         }
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM HH:mm");
         LocalDateTime now = LocalDateTime.now();
-
-        this.dataPrinter = dataPrinter;
         this.time = dtf.format(now);
         this.name = name;
         this.data = data;
@@ -92,13 +67,9 @@ public class PostRequest implements Request {
             dataPrinter.printInfoMessage("Commit doesn't added.");
             dataPrinter.printErrorMessage(format(
                     "Account file '%s' does not exists or renamed. Current name:%s",
-                    account.getPATH(), account.getName()
+                    account.getPath(), account.getName()
             ));
             e.printStackTrace();
         }
-    }
-
-    private boolean isNumber(final char ch) {
-        return ('1' <= ch && ch <= '9');
     }
 }
