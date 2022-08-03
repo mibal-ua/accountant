@@ -31,7 +31,7 @@ public class GetRequest implements Request {
 
     private String name;
 
-    private String time;
+    private String date;
 
     private String content;
 
@@ -48,44 +48,55 @@ public class GetRequest implements Request {
     private void constructAllFields() {
         StringBuilder userRequest = new StringBuilder();
         while (userRequest.toString().equals("")) {
-            dataPrinter.printInfoMessage("Enter time, name or content of commit:");
-            userRequest = new StringBuilder().append(inputReader.read());
+            dataPrinter.printInfoMessage("""
+                    Enter time, name or content of commit:
+                    Or enter '/all' command""");
+            userRequest = new StringBuilder().append(inputReader.read().trim());
         }
-
-        if (userRequest.toString().equalsIgnoreCase("all")) {
+        if (userRequest.toString().equalsIgnoreCase("/all")) {
             this.name = null;
-            this.time = null;
+            this.date = null;
             this.content = null;
-        } else if (!(userRequest.length() < 3) && (userRequest.charAt(1) == '.' || userRequest.charAt(2) == '.')) {
+        } else if (isRequestByDate(userRequest.toString())) {
             if (userRequest.charAt(1) == '.') {
-                userRequest.insert(0, 0);
+                userRequest.insert(0, '0');
             }
             if ((userRequest.length() == 4)) {
-                userRequest.insert(3, 0);
+                userRequest.insert(3, '0');
             }
-            this.time = userRequest.toString();
+            this.date = userRequest.toString();
             this.name = null;
             this.content = null;
         } else {
-            this.time = null;
+            this.date = null;
             String str;
+            dataPrinter.printInfoMessage("Is this a '/name' or a '/content'?");
             while (true) {
-                dataPrinter.printInfoMessage("Is this a Name? (Y/N)");
                 str = inputReader.read().trim();
-                if (str.length() == 1) {
-                    if (str.equalsIgnoreCase("Y")) {
+                if (str.charAt(0) == '/') {
+                    String command = str.substring(1);
+                    if(command.equalsIgnoreCase("name")){
                         this.name = userRequest.toString();
                         this.content = null;
                         break;
-                    }
-                    if (str.equalsIgnoreCase("N")) {
-                        this.content = userRequest.toString();
+                    } else if(command.equalsIgnoreCase("content")){
                         this.name = null;
+                        this.content = userRequest.toString();
                         break;
+                    } else {
+                        dataPrinter.printInfoMessage(
+                                "String you enter is not command, you must choice among '/name' and '/content'."
+                        );
                     }
+                } else {
+                    dataPrinter.printInfoMessage("String you enter is not command, you must start with '/' char.");
                 }
             }
         }
+    }
+
+    private boolean isRequestByDate(final String userRequest) {
+        return (!(userRequest.length() < 3) && (userRequest.charAt(1) == '.' || userRequest.charAt(2) == '.'));
     }
 
     @Override
@@ -96,7 +107,7 @@ public class GetRequest implements Request {
         } catch (IOException e) {
             dataPrinter.printErrorMessage(format(
                     "Account file '%s' does not exists or renamed. Current name: '%s'",
-                    account.getPATH(), account.getName()
+                    account.getPath(), account.getName()
             ));
             e.printStackTrace();
             return;
@@ -104,33 +115,27 @@ public class GetRequest implements Request {
         String result;
         if (name != null) {
             result = findByName(commits, name);
-        } else if (time != null) {
-            result = findByTime(commits, time);
+        } else if (date != null) {
+            result = findByTime(commits, date);
         } else if (content != null) {
             result = findByContent(commits, content);
         } else {
             result = findAll(commits);
         }
-
         if (result.equals("")) {
             dataPrinter.printInfoMessage("Data by current request is empty.");
         } else {
             dataPrinter.printInfoMessage("Commits by request:");
             dataPrinter.printInfoMessage(result);
         }
+    }
 
+    private String findByName(final Commit[] commits, final String name) {
+        return findByString(commits, name, Commit::getName);
     }
 
     private String findByContent(final Commit[] commits, final String content) {
         return findByString(commits, content, Commit::getContent);
-    }
-
-    private String findAll(final Commit[] commits) {
-        StringBuilder str = new StringBuilder();
-        for (final Commit commit : commits) {
-            str.append(commit.toString());
-        }
-        return str.toString();
     }
 
     private String findByTime(final Commit[] commits, final String time) {
@@ -148,31 +153,38 @@ public class GetRequest implements Request {
         return result.toString();
     }
 
-    private String findByName(final Commit[] commits, final String name) {
-        return findByString(commits, name, Commit::getName);
+    private String findAll(final Commit[] commits) {
+        StringBuilder str = new StringBuilder();
+        for (final Commit commit : commits) {
+            str.append(commit.toString());
+        }
+        return str.toString();
     }
+
 
     private String findByString(final Commit[] commits, final String request, final Lambda lambda) {
         StringBuilder result = new StringBuilder();
-        String[] requestKeyWords = request.split(" ");
+        String[] requestKeyWords = request.split(" "); //розілили запит на слова в масиві
         String[] commitKeyWords;
         for (final Commit commit : commits) {
-            commitKeyWords = lambda.getValue(commit).trim().split(" ");//
-            for (final String commitWord : commitKeyWords) {
-                for (final String requestKeyWord : requestKeyWords) {
-                    int count = 0;
-                    if (commitWord.equalsIgnoreCase(requestKeyWord)) {
+            commitKeyWords = lambda.getValue(commit).trim().split(" "); // узяли перший коміт, отримали данні, розділили
+            for (final String commitWord : commitKeyWords) { //беремо одне слово з коміту
+                for (final String requestKeyWord : requestKeyWords) { //беремо одне слово з запиту
+                    if (commitWord.equalsIgnoreCase(requestKeyWord)) { //якщо повністю ідентичні - беремо коміт
                         result.append(commit);
                         break;
                     }
-                    int minLengthOfWords = Math.min(requestKeyWord.length(), commitWord.length());
-                    for (int i = 0; i < minLengthOfWords; i++) {
-                        if (commitWord.charAt(i) == requestKeyWord.charAt(i)) {
-                            count++;
-                        }
-                        if (count == 3) {
-                            result.append(commit);
-                            break;
+                    int minLengthOfWords = Math.min(requestKeyWord.length(), commitWord.length()); //рахуємо найменшу кількість букв в словах
+                    int count = 0;
+                    if (!(minLengthOfWords < 3)){ //якщо в нас є слово з 2 або 1 букв, ми його ігноруємо
+                        for (int i = 0; i < minLengthOfWords; i++) {
+                            if (commitWord.charAt(i) == requestKeyWord.charAt(i)) {
+                                count++;
+                            }
+                            if (count == 3) {
+                                result.append(commit);
+                                break;
+                            }
                         }
                     }
                 }
