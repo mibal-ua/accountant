@@ -28,6 +28,12 @@ import java.util.Scanner;
 public class ConsoleInputReader implements InputReader {
     @Override
     public String read() {
-        return new Scanner(System.in).nextLine().trim();
+        String str = new Scanner(System.in).nextLine().trim();
+        if(str.equalsIgnoreCase("/exit")){
+            System.out.println("Press any key to exit...");
+            new Scanner(System.in).nextLine();
+            System.exit(0);
+        }
+        return str;
     }
 }
