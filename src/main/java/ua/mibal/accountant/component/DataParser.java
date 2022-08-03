@@ -19,15 +19,23 @@ package ua.mibal.accountant.component;
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
 
-import java.io.IOException;
-
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
 public interface DataParser {
 
-    Commit[] getCommits(final Account account) throws IOException;
+    Commit[] getCommits(final Account account);
 
-    void add(final Account account, final Commit commitToAdd) throws IOException;
+    void addCommit(final Account account, final Commit commitToAdd);
+
+    void createAccountFile(Account account);
+
+    String getPathToAccount(Account account);
+
+    boolean isAccountExist(Account account);
+
+    Account[] getAccountsFromList();
+
+    boolean addAccountToAccountList(Account account);
 }
