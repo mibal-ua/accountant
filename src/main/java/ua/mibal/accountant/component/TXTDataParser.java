@@ -18,11 +18,11 @@ package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
+import ua.mibal.accountant.model.sctructure.DynaAccountArray;
 import ua.mibal.accountant.model.sctructure.DynaCommitArray;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
@@ -32,17 +32,24 @@ import java.util.Scanner;
 public class TXTDataParser implements DataParser {
 
     @Override
-    public Commit[] getCommits(final Account account) throws IOException {
+    public Commit[] getCommits(final Account account) {
 
-        File myObj = new File(account.getPATH());
-        Scanner scanner = new Scanner(myObj);
+        File file = new File(account.getPath());
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         DynaCommitArray commits = new DynaCommitArray();
         String line;
         String time = null;
         String name = null;
+
         while (scanner.hasNextLine()) {
-            line = scanner.nextLine();
+            line = scanner.nextLine(); //беремо строчку
             if (isNumber(line.charAt(0))) {
                 StringBuilder str = new StringBuilder();
                 for (int j = 0; j < line.length(); j++) {
@@ -64,24 +71,106 @@ public class TXTDataParser implements DataParser {
     }
 
     private boolean isNumber(final char ch) {
-        return '1' <= ch && ch <= '9';
+        return '0' <= ch && ch <= '9';
     }
 
     @Override
-    public void add(final Account account, final Commit commitToAdd) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        Commit[] commits = getCommits(account);
-        if (commits != null) {
-            for (final Commit commit : commits) {
-                stringBuilder.append(commit);
+    public void addCommit(final Account account, final Commit commitToAdd) {
+        File file = new File(account.getPath());
+        try {
+            FileWriter fileWriter = new FileWriter(file, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            PrintWriter out = new PrintWriter(bufferedWriter);
+
+            out.print(commitToAdd);
+
+            bufferedWriter.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createAccountFile(final Account account) {
+        File file = new File(account.getPath());
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getPathToAccount(final Account account) {
+        return System.getProperty("user.home") + "/" + account.getName() + ".txt";
+    }
+
+    @Override
+    public boolean isAccountExist(final Account account) {
+        File file = new File(account.getPath());
+        return file.exists();
+    }
+
+    @Override
+    public Account[] getAccountsFromList() {
+        File file = new File(System.getProperty("user.home") + "/accountsList.txt");
+        if (file.exists()) {
+            DynaAccountArray result = new DynaAccountArray();
+            Scanner scanner;
+            try {
+                scanner = new Scanner(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
             }
-            stringBuilder.append(commitToAdd.toString());
+            StringBuilder newList = new StringBuilder();
 
+            while (scanner.hasNextLine()) {
+                String name = scanner.nextLine().trim();
+                if(!name.equals("")){
+                    File accountFile = new File(System.getProperty("user.home") + "/" + name + ".txt");
+                    if (accountFile.exists()) {
+                        result.add(new Account(name, this));
+                        newList.append(name).append('\n');
+                    }
+                }
+            }
+            PrintWriter writer = null;
+            try {
+                writer = new PrintWriter(file.getAbsolutePath(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            writer.println(newList);
+            writer.close();
+            return result.asArray();
+        } else {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
-            File file = new File(account.getPATH());
-            FileWriter myWriter = new FileWriter(file);
-            myWriter.write(stringBuilder.toString());
-            myWriter.close();
+    @Override
+    public boolean addAccountToAccountList(final Account account) {
+        File file = new File(System.getProperty("user.home") + "/accountsList.txt");
+        try {
+            FileWriter fileWriter = new FileWriter(file, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            PrintWriter out = new PrintWriter(bufferedWriter);
+
+            out.print(account.getName() + '\n');
+
+            bufferedWriter.close();
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -16,8 +16,7 @@
 
 package ua.mibal.accountant.model;
 
-import ua.mibal.accountant.component.TXTDataParser;
-import ua.mibal.accountant.model.Commit;
+import ua.mibal.accountant.component.DataParser;
 
 import java.io.IOException;
 
@@ -29,21 +28,30 @@ public class Account {
 
     private final String name;
 
-    private final String path;
+    private static String PATH;
 
-    private final TXTDataParser txtDataParser;
+    private final DataParser dataParser;
 
     private Commit[] lastCommits;
 
-    public Account(final String name) {
+    private boolean emptiness = false;
+
+    public Account(final String name, final DataParser dataParser) {
+        this.dataParser = dataParser;
         this.name = name;
-        path = "/Users/" + System.getProperty("user.name") + "/" + name + ".txt";
-        txtDataParser = new TXTDataParser();
-        lastCommits = null;
+        PATH = dataParser.getPathToAccount(this);
+        if (!dataParser.isAccountExist(this)) {
+            dataParser.createAccountFile(this);
+            emptiness = true;
+        }
+        lastCommits = dataParser.getCommits(this).clone();
+        if(lastCommits.length == 0){
+            emptiness = true;
+        }
     }
 
-    public final String getPATH() {
-        return path;
+    public final String getPath() {
+        return PATH;
     }
 
     public final String getName() {
@@ -51,14 +59,20 @@ public class Account {
     }
 
     public void add(final Commit commitToAdd) throws IOException {
-        txtDataParser.add(this, commitToAdd);
+        dataParser.addCommit(this, commitToAdd);
         lastCommits = null;
+        emptiness = false;
     }
 
-    public Commit[] getCommits() throws IOException{
+    public Commit[] getCommits() throws IOException {
         if (lastCommits == null) {
-            lastCommits = txtDataParser.getCommits(this).clone();
+            lastCommits = dataParser.getCommits(this).clone();
+
         }
         return lastCommits.clone();
+    }
+
+    public boolean isEmpty(){
+        return emptiness;
     }
 }
