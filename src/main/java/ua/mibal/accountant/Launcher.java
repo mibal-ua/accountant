@@ -17,8 +17,6 @@
 
 package ua.mibal.accountant;
 
-
-
 import ua.mibal.accountant.component.*;
 
 /**
@@ -28,7 +26,7 @@ import ua.mibal.accountant.component.*;
 public class Launcher {
 
     public static void main(String[] args) {
-        Accountant accountant = new Accountant(args);
-        accountant.create();
+        RequestMaker requestMaker = new RequestMaker(args);
+        requestMaker.make();
     }
 }
