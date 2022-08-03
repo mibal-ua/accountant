@@ -21,7 +21,7 @@
 
     <groupId>ua.mibal</groupId>
     <artifactId>accountant</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <url>https://t.me/mibal_ua</url>
     <organization>
@@ -90,6 +90,18 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <mainClass>ua.mibal.accountant.Launcher</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
