@@ -11,18 +11,18 @@ mvn -P with-jre clean package
 ```
 
 - Use the following archives:
-    - `target/tic-tac-toe-${project.version}-windows-with-jre.zip` for Windows
-    - `target/tic-tac-toe-${project.version}-macos-with-jre.tar.gz` for MacOS
-    - `target/tic-tac-toe-${project.version}-linux-with-jre.tar.gz` for Linux
+    - `target/accountant-${project.version}-windows-with-jre.zip` for Windows
+    - `target/accountant-${project.version}-macos-with-jre.tar.gz` for MacOS
+    - `target/accountant-${project.version}-linux-with-jre.tar.gz` for Linux
 
 ## Run instructions
 
-- Unzip the Tic tac toe distribution:
-    - Unzip `tic-tac-toe-${project.version}-windows-with-jre.zip` for Windows;
-    - Unzip `tic-tac-toe-${project.version}-macos-with-jre.tar.gz` for MacOS;
-    - Unzip `tic-tac-toe-${project.version}-linux-with-jre.tar.gz` for Linux;
+- Unzip the Accountant distribution:
+    - Unzip `accountant-${project.version}-windows-with-jre.zip` for Windows;
+    - Unzip `accountant-${project.version}-macos-with-jre.tar.gz` for MacOS;
+    - Unzip `accountant-${project.version}-linux-with-jre.tar.gz` for Linux;
 - Go to unzipped directory;
-- Run the game by double-click on the start script:
+- Run the app by double-click on the start script:
     - `start.cmd` for Windows;
     - `start.sh` for MacOS or Linux;
 
