@@ -76,15 +76,10 @@ public class RequestMaker {
                     }
                 }
             }
-            Request request;
-            if (requestMode == GET) {
-                request = new GetRequest(inputReader, dataPrinter);
-            } else if (requestMode == ADD) {
-                request = new PostRequest(inputReader, dataPrinter);
-            } else {
-                throw new IllegalArgumentException(format(
-                        "Program mode have illegal argument '%s'.", requestMode.name()));
-            }
+            Request request = switch (requestMode){
+                case GET -> new GetRequest(inputReader, dataPrinter);
+                case ADD -> new PostRequest(inputReader, dataPrinter);
+            };
             request.make(account);
             dataPrinter.printInfoMessage("For the choice the another account, enter '/other'.");
         }
