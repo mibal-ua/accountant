@@ -38,5 +38,8 @@ public interface DataOperator {
 
     List<Account> getAllAccounts();
 
+    // FIXME if account exists, adding successfully
     boolean addAccountToAccountList(Account account);
+
+    boolean deleteAccount(Account account);
 }

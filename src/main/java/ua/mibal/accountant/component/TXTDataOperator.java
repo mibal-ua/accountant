@@ -35,9 +35,10 @@ import java.util.Scanner;
  */
 public class TXTDataOperator implements DataOperator {
 
+    public static final String ACCOUNTS_LIST_TXT_PATH = "/accountsList.txt";
+
     @Override
     public List<Commit> getCommits(final Account account) {
-
         File file = new File(account.getPath());
         Scanner scanner;
         try {
@@ -118,7 +119,7 @@ public class TXTDataOperator implements DataOperator {
 
     @Override
     public List<Account> getAllAccounts() {
-        File file = new File(System.getProperty("user.home") + "/accountsList.txt");
+        File file = new File(System.getProperty("user.home") + ACCOUNTS_LIST_TXT_PATH);
         if (file.exists()) {
             List<Account> result = new ArrayList<>();
             Scanner scanner;
@@ -161,7 +162,7 @@ public class TXTDataOperator implements DataOperator {
 
     @Override
     public boolean addAccountToAccountList(final Account account) {
-        File file = new File(System.getProperty("user.home") + "/accountsList.txt");
+        File file = new File(System.getProperty("user.home") + ACCOUNTS_LIST_TXT_PATH);
         try {
             FileWriter fileWriter = new FileWriter(file, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -173,6 +174,32 @@ public class TXTDataOperator implements DataOperator {
             out.close();
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteAccount(final Account account) {
+        final String nameAccountToDelete = account.getName();
+        final File file = new File(System.getProperty("user.home") + ACCOUNTS_LIST_TXT_PATH);
+        Scanner scanner;
+        try {
+            scanner = new Scanner(file);
+            final List<String> lines = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                final String line = scanner.nextLine().trim();
+                lines.add(line);
+            }
+            for (final String line : lines) {
+                if (line.equals(nameAccountToDelete)) {
+                    final File fileToDelete =
+                        new File(System.getProperty("user.home") + "/" + nameAccountToDelete + ".txt");
+                    return fileToDelete.delete();
+                }
+            }
+            return false;
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
         }
