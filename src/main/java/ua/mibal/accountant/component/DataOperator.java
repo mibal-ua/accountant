@@ -23,7 +23,7 @@ import ua.mibal.accountant.model.Commit;
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
-public interface DataParser {
+public interface DataOperator {
 
     Commit[] getCommits(final Account account);
 

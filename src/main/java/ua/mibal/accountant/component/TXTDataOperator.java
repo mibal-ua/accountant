@@ -29,7 +29,7 @@ import java.util.Scanner;
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua
  */
-public class TXTDataParser implements DataParser {
+public class TXTDataOperator implements DataOperator {
 
     @Override
     public Commit[] getCommits(final Account account) {

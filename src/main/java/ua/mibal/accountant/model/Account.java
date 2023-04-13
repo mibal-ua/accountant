@@ -16,7 +16,7 @@
 
 package ua.mibal.accountant.model;
 
-import ua.mibal.accountant.component.DataParser;
+import ua.mibal.accountant.component.DataOperator;
 
 import java.io.IOException;
 
@@ -30,21 +30,21 @@ public class Account {
 
     private static String PATH;
 
-    private final DataParser dataParser;
+    private final DataOperator dataOperator;
 
     private Commit[] lastCommits;
 
     private boolean emptiness = false;
 
-    public Account(final String name, final DataParser dataParser) {
-        this.dataParser = dataParser;
+    public Account(final String name, final DataOperator dataOperator) {
+        this.dataOperator = dataOperator;
         this.name = name;
-        PATH = dataParser.getPathToAccount(this);
-        if (!dataParser.isAccountExist(this)) {
-            dataParser.createAccountFile(this);
+        PATH = dataOperator.getPathToAccount(this);
+        if (!dataOperator.isAccountExist(this)) {
+            dataOperator.createAccountFile(this);
             emptiness = true;
         }
-        lastCommits = dataParser.getCommits(this).clone();
+        lastCommits = dataOperator.getCommits(this).clone();
         if(lastCommits.length == 0){
             emptiness = true;
         }
@@ -59,14 +59,14 @@ public class Account {
     }
 
     public void add(final Commit commitToAdd) throws IOException {
-        dataParser.addCommit(this, commitToAdd);
+        dataOperator.addCommit(this, commitToAdd);
         lastCommits = null;
         emptiness = false;
     }
 
     public Commit[] getCommits() throws IOException {
         if (lastCommits == null) {
-            lastCommits = dataParser.getCommits(this).clone();
+            lastCommits = dataOperator.getCommits(this).clone();
 
         }
         return lastCommits.clone();

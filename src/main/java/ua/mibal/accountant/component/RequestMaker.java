@@ -34,9 +34,9 @@ public class RequestMaker {
 
     final InputReader inputReader = new ConsoleInputReader();
 
-    final DataParser dataParser = new TXTDataParser();
+    final DataOperator dataOperator = new TXTDataOperator();
 
-    final Accountant accountant = new Accountant(dataPrinter, inputReader, dataParser);
+    final Accountant accountant = new Accountant(dataPrinter, inputReader, dataOperator);
 
     final String[] args;
 

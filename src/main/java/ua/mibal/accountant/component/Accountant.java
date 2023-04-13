@@ -30,18 +30,18 @@ public class Accountant {
 
     final InputReader inputReader;
 
-    final DataParser dataParser;
+    final DataOperator dataOperator;
 
-    public Accountant(final DataPrinter dataPrinter, final InputReader inputReader, final DataParser dataParser) {
+    public Accountant(final DataPrinter dataPrinter, final InputReader inputReader, final DataOperator dataOperator) {
         this.dataPrinter = dataPrinter;
         this.inputReader = inputReader;
-        this.dataParser = dataParser;
+        this.dataOperator = dataOperator;
 
         accounts = getAccountsFromList();
     }
 
     private Account[] getAccountsFromList() {
-        return dataParser.getAccountsFromList();
+        return dataOperator.getAccountsFromList();
     }
 
     public Account getCurrentAccount() {
@@ -61,7 +61,7 @@ public class Accountant {
                     break;
                 }
             }
-            desiredAccount = new Account(name, dataParser);
+            desiredAccount = new Account(name, dataOperator);
             addAccountToAccountList(desiredAccount);
         } else {
             boolean isFind = false;
@@ -112,11 +112,11 @@ public class Accountant {
                 break;
             }
         }
-        return new Account(name, dataParser);
+        return new Account(name, dataOperator);
     }
 
     private void addAccountToAccountList(final Account account) {
-        if(!dataParser.addAccountToAccountList(account)){
+        if(!dataOperator.addAccountToAccountList(account)){
             dataPrinter.printErrorMessage("Error with adding account to accountList");
         }
     }
