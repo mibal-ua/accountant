@@ -44,10 +44,12 @@ public class PostRequest implements Request {
         while (name.equals("")) {
             dataPrinter.printInfoMessage("Enter name of new commit:");
             name = inputReader.read().trim();
+            dataPrinter.clearLines(2);
         }
         while (data.equals("")) {
             dataPrinter.printInfoMessage("Enter data of new commit:");
             data = inputReader.read();
+            dataPrinter.clearLines(2);
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM HH:mm");
         LocalDateTime now = LocalDateTime.now();
