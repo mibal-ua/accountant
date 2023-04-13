@@ -53,8 +53,10 @@ public class AccountantApplication {
 
     public void start() {
         dataPrinter.printInfoMessage("You can exit everywhere by the typing '/exit'.");
+        dataPrinter.printInfoMessage("");
         while (true) {
-            final Account account = accountant.getCurrentAccount(lastAccount);
+            final Account account = accountant.selectAccount(lastAccount);
+            dataPrinter.printInfoMessage("Account: " + account.getName());
             Request request;
             if (account.isEmpty()) {
                 request = requestMaker.make(ADD);
