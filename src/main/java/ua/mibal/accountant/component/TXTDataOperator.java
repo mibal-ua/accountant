@@ -39,7 +39,7 @@ public class TXTDataOperator implements DataOperator {
     public List<Commit> getCommits(final Account account) {
 
         File file = new File(account.getPath());
-        Scanner scanner = null;
+        Scanner scanner;
         try {
             scanner = new Scanner(file);
         } catch (FileNotFoundException e) {
@@ -140,7 +140,7 @@ public class TXTDataOperator implements DataOperator {
                     }
                 }
             }
-            PrintWriter writer = null;
+            PrintWriter writer;
             try {
                 writer = new PrintWriter(file.getAbsolutePath(), StandardCharsets.UTF_8);
             } catch (IOException e) {

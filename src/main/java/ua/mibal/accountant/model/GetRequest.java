@@ -18,11 +18,9 @@ package ua.mibal.accountant.model;
 
 import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
-
+import static java.lang.String.format;
 import java.io.IOException;
 import java.util.List;
-
-import static java.lang.String.format;
 
 /**
  * @author Michael Balakhon
@@ -30,15 +28,15 @@ import static java.lang.String.format;
  */
 public class GetRequest implements Request {
 
+    private final DataPrinter dataPrinter;
+
+    private final InputReader inputReader;
+
     private String name;
 
     private String date;
 
     private String content;
-
-    private final DataPrinter dataPrinter;
-
-    private final InputReader inputReader;
 
     public GetRequest(final InputReader inputReader, final DataPrinter dataPrinter) {
         this.dataPrinter = dataPrinter;
@@ -50,8 +48,8 @@ public class GetRequest implements Request {
         StringBuilder userRequest = new StringBuilder();
         while (userRequest.toString().equals("")) {
             dataPrinter.printInfoMessage("""
-                    Enter time, name or content of commit:
-                    Or enter '/all' command""");
+                Enter time, name or content of commit:
+                Or enter '/all' command""");
             userRequest = new StringBuilder().append(inputReader.read().trim());
         }
         if (userRequest.toString().equalsIgnoreCase("/all")) {
@@ -76,17 +74,17 @@ public class GetRequest implements Request {
                 str = inputReader.read().trim();
                 if (str.charAt(0) == '/') {
                     String command = str.substring(1);
-                    if(command.equalsIgnoreCase("name")){
+                    if (command.equalsIgnoreCase("name")) {
                         this.name = userRequest.toString();
                         this.content = null;
                         break;
-                    } else if(command.equalsIgnoreCase("content")){
+                    } else if (command.equalsIgnoreCase("content")) {
                         this.name = null;
                         this.content = userRequest.toString();
                         break;
                     } else {
                         dataPrinter.printInfoMessage(
-                                "String you enter is not command, you must choice among '/name' and '/content'."
+                            "String you enter is not command, you must choice among '/name' and '/content'."
                         );
                     }
                 } else {
@@ -107,8 +105,8 @@ public class GetRequest implements Request {
             commits = account.getCommits();
         } catch (IOException e) {
             dataPrinter.printErrorMessage(format(
-                    "Account file '%s' does not exists or renamed. Current name: '%s'",
-                    account.getPath(), account.getName()
+                "Account file '%s' does not exists or renamed. Current name: '%s'",
+                account.getPath(), account.getName()
             ));
             e.printStackTrace();
             return;
@@ -175,9 +173,10 @@ public class GetRequest implements Request {
                         result.append(commit);
                         break;
                     }
-                    int minLengthOfWords = Math.min(requestKeyWord.length(), commitWord.length()); //рахуємо найменшу кількість букв в словах
+                    int minLengthOfWords = Math.min(requestKeyWord.length(),
+                        commitWord.length()); //рахуємо найменшу кількість букв в словах
                     int count = 0;
-                    if (!(minLengthOfWords < 3)){ //якщо в нас є слово з 2 або 1 букв, ми його ігноруємо
+                    if (!(minLengthOfWords < 3)) { //якщо в нас є слово з 2 або 1 букв, ми його ігноруємо
                         for (int i = 0; i < minLengthOfWords; i++) {
                             if (commitWord.charAt(i) == requestKeyWord.charAt(i)) {
                                 count++;

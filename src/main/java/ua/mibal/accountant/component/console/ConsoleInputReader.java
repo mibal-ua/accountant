@@ -16,9 +16,7 @@
 
 package ua.mibal.accountant.component.console;
 
-import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
-
 import java.util.Scanner;
 
 /**
@@ -26,10 +24,11 @@ import java.util.Scanner;
  * @link http://t.me/mibal_ua
  */
 public class ConsoleInputReader implements InputReader {
+
     @Override
     public String read() {
         String str = new Scanner(System.in).nextLine().trim();
-        if(str.equalsIgnoreCase("/exit")){
+        if (str.equalsIgnoreCase("/exit")) {
             System.out.println("Press any key to exit...");
             new Scanner(System.in).nextLine();
             System.exit(0);

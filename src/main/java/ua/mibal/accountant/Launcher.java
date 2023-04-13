@@ -17,8 +17,6 @@
 
 package ua.mibal.accountant;
 
-import ua.mibal.accountant.component.*;
-
 /**
  * @author Michael Balakhon
  * @link http://t.me/mibal_ua

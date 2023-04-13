@@ -17,7 +17,6 @@
 package ua.mibal.accountant.model;
 
 import ua.mibal.accountant.component.DataOperator;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -27,9 +26,9 @@ import java.util.List;
  */
 public class Account {
 
-    private final String name;
-
     private static String PATH;
+
+    private final String name;
 
     private final DataOperator dataOperator;
 
@@ -46,7 +45,7 @@ public class Account {
             emptiness = true;
         }
         lastCommits = dataOperator.getCommits(this);
-        if(lastCommits.size() == 0){
+        if (lastCommits.size() == 0) {
             emptiness = true;
         }
     }
@@ -73,7 +72,7 @@ public class Account {
         return lastCommits;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return emptiness;
     }
 }

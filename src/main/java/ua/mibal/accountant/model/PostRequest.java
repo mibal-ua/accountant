@@ -18,12 +18,10 @@ package ua.mibal.accountant.model;
 
 import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
-
+import static java.lang.String.format;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static java.lang.String.format;
 
 /**
  * @author Michael Balakhon
@@ -66,8 +64,8 @@ public class PostRequest implements Request {
         } catch (IOException e) {
             dataPrinter.printInfoMessage("Commit doesn't added.");
             dataPrinter.printErrorMessage(format(
-                    "Account file '%s' does not exists or renamed. Current name:%s",
-                    account.getPath(), account.getName()
+                "Account file '%s' does not exists or renamed. Current name:%s",
+                account.getPath(), account.getName()
             ));
             e.printStackTrace();
         }
