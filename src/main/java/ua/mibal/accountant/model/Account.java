@@ -36,6 +36,8 @@ public class Account {
 
     private boolean emptiness = false;
 
+    public static final int MIN_ACCOUNT_NAME_LENGTH = 3;
+
     public Account(final String name, final DataOperator dataOperator) {
         this.dataOperator = dataOperator;
         this.name = name;
