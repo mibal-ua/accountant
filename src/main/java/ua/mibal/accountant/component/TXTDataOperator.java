@@ -126,7 +126,7 @@ public class TXTDataOperator implements DataOperator {
                 scanner = new Scanner(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return null;
+                return List.of();
             }
             StringBuilder newList = new StringBuilder();
 
@@ -155,7 +155,7 @@ public class TXTDataOperator implements DataOperator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return List.of();
         }
     }
 
