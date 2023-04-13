@@ -27,6 +27,7 @@ import ua.mibal.accountant.component.console.ConsoleInputReader;
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Request;
 import static ua.mibal.accountant.model.RequestMode.ADD;
+import java.util.Scanner;
 
 /**
  * @author Mykhailo Balakhon
@@ -36,7 +37,11 @@ public class AccountantApplication {
 
     private final DataPrinter dataPrinter = new ConsoleDataPrinter();
 
-    private final InputReader inputReader = new ConsoleInputReader();
+    private final InputReader inputReader = new ConsoleInputReader(() -> {
+        System.out.println("Press any key to exit...");
+        new Scanner(System.in).nextLine();
+        System.exit(0);
+    });
 
     private final DataOperator dataOperator = new TXTDataOperator();
 

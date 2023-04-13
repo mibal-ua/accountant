@@ -23,4 +23,10 @@ package ua.mibal.accountant.component;
 public interface InputReader {
 
     String read();
+
+    @FunctionalInterface
+    interface ExitHandler {
+
+        void exit();
+    }
 }

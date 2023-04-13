@@ -25,13 +25,17 @@ import java.util.Scanner;
  */
 public class ConsoleInputReader implements InputReader {
 
+    private final ExitHandler exitHandler;
+
+    public ConsoleInputReader(final ExitHandler exitHandler) {
+        this.exitHandler = exitHandler;
+    }
+
     @Override
     public String read() {
-        String str = new Scanner(System.in).nextLine().trim();
+        final String str = new Scanner(System.in).nextLine().trim();
         if (str.equalsIgnoreCase("/exit")) {
-            System.out.println("Press any key to exit...");
-            new Scanner(System.in).nextLine();
-            System.exit(0);
+            exitHandler.exit();
         }
         return str;
     }
