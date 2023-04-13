@@ -18,11 +18,15 @@ package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
-import ua.mibal.accountant.model.sctructure.DynaAccountArray;
-import ua.mibal.accountant.model.sctructure.DynaCommitArray;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -32,7 +36,7 @@ import java.util.Scanner;
 public class TXTDataOperator implements DataOperator {
 
     @Override
-    public Commit[] getCommits(final Account account) {
+    public List<Commit> getCommits(final Account account) {
 
         File file = new File(account.getPath());
         Scanner scanner = null;
@@ -43,7 +47,7 @@ public class TXTDataOperator implements DataOperator {
             return null;
         }
 
-        DynaCommitArray commits = new DynaCommitArray();
+        List<Commit> commits = new ArrayList<>();
         String line;
         String time = null;
         String name = null;
@@ -67,7 +71,7 @@ public class TXTDataOperator implements DataOperator {
             }
         }
         scanner.close();
-        return commits.asArray();
+        return commits;
     }
 
     private boolean isNumber(final char ch) {
@@ -113,10 +117,10 @@ public class TXTDataOperator implements DataOperator {
     }
 
     @Override
-    public Account[] getAccountsFromList() {
+    public List<Account> getAllAccounts() {
         File file = new File(System.getProperty("user.home") + "/accountsList.txt");
         if (file.exists()) {
-            DynaAccountArray result = new DynaAccountArray();
+            List<Account> result = new ArrayList<>();
             Scanner scanner;
             try {
                 scanner = new Scanner(file);
@@ -128,7 +132,7 @@ public class TXTDataOperator implements DataOperator {
 
             while (scanner.hasNextLine()) {
                 String name = scanner.nextLine().trim();
-                if(!name.equals("")){
+                if (!name.equals("")) {
                     File accountFile = new File(System.getProperty("user.home") + "/" + name + ".txt");
                     if (accountFile.exists()) {
                         result.add(new Account(name, this));
@@ -144,7 +148,7 @@ public class TXTDataOperator implements DataOperator {
             }
             writer.println(newList);
             writer.close();
-            return result.asArray();
+            return result;
         } else {
             try {
                 file.createNewFile();

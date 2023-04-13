@@ -20,6 +20,7 @@ import ua.mibal.accountant.component.DataPrinter;
 import ua.mibal.accountant.component.InputReader;
 
 import java.io.IOException;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -101,7 +102,7 @@ public class GetRequest implements Request {
 
     @Override
     public void make(final Account account) {
-        Commit[] commits;
+        List<Commit> commits;
         try {
             commits = account.getCommits();
         } catch (IOException e) {
@@ -130,15 +131,15 @@ public class GetRequest implements Request {
         }
     }
 
-    private String findByName(final Commit[] commits, final String name) {
+    private String findByName(final List<Commit> commits, final String name) {
         return findByString(commits, name, Commit::getName);
     }
 
-    private String findByContent(final Commit[] commits, final String content) {
+    private String findByContent(final List<Commit> commits, final String content) {
         return findByString(commits, content, Commit::getContent);
     }
 
-    private String findByTime(final Commit[] commits, final String time) {
+    private String findByTime(final List<Commit> commits, final String time) {
         StringBuilder result = new StringBuilder();
         for (final Commit commit : commits) {
             String commitTime = commit.getTime();
@@ -153,7 +154,7 @@ public class GetRequest implements Request {
         return result.toString();
     }
 
-    private String findAll(final Commit[] commits) {
+    private String findAll(final List<Commit> commits) {
         StringBuilder str = new StringBuilder();
         for (final Commit commit : commits) {
             str.append(commit.toString());
@@ -162,7 +163,7 @@ public class GetRequest implements Request {
     }
 
 
-    private String findByString(final Commit[] commits, final String request, final Lambda lambda) {
+    private String findByString(final List<Commit> commits, final String request, final Lambda lambda) {
         StringBuilder result = new StringBuilder();
         String[] requestKeyWords = request.split(" "); //розілили запит на слова в масиві
         String[] commitKeyWords;

@@ -19,6 +19,7 @@ package ua.mibal.accountant.model;
 import ua.mibal.accountant.component.DataOperator;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Michael Balakhon
@@ -32,7 +33,7 @@ public class Account {
 
     private final DataOperator dataOperator;
 
-    private Commit[] lastCommits;
+    private List<Commit> lastCommits;
 
     private boolean emptiness = false;
 
@@ -44,8 +45,8 @@ public class Account {
             dataOperator.createAccountFile(this);
             emptiness = true;
         }
-        lastCommits = dataOperator.getCommits(this).clone();
-        if(lastCommits.length == 0){
+        lastCommits = dataOperator.getCommits(this);
+        if(lastCommits.size() == 0){
             emptiness = true;
         }
     }
@@ -64,12 +65,12 @@ public class Account {
         emptiness = false;
     }
 
-    public Commit[] getCommits() throws IOException {
+    public List<Commit> getCommits() throws IOException {
         if (lastCommits == null) {
-            lastCommits = dataOperator.getCommits(this).clone();
+            lastCommits = dataOperator.getCommits(this);
 
         }
-        return lastCommits.clone();
+        return lastCommits;
     }
 
     public boolean isEmpty(){

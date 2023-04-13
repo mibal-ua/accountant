@@ -17,6 +17,7 @@
 package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
+import java.util.List;
 
 /**
  * @author Michael Balakhon
@@ -24,7 +25,7 @@ import ua.mibal.accountant.model.Account;
  */
 public class Accountant {
 
-    Account[] accounts;
+    List<Account> accounts;
 
     final DataPrinter dataPrinter;
 
@@ -37,16 +38,12 @@ public class Accountant {
         this.inputReader = inputReader;
         this.dataOperator = dataOperator;
 
-        accounts = getAccountsFromList();
-    }
-
-    private Account[] getAccountsFromList() {
-        return dataOperator.getAccountsFromList();
+        accounts = dataOperator.getAllAccounts();
     }
 
     public Account getCurrentAccount() {
         Account desiredAccount = null;
-        if (accounts == null || accounts.length == 0) {
+        if (accounts == null || accounts.size() == 0) {
             dataPrinter.printInfoMessage("""
                     There are no accounts. You can create new.
                     Enter name of a new account:""");

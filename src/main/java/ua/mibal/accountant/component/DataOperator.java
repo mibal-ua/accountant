@@ -18,6 +18,7 @@ package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
 import ua.mibal.accountant.model.Commit;
+import java.util.List;
 
 /**
  * @author Michael Balakhon
@@ -25,7 +26,7 @@ import ua.mibal.accountant.model.Commit;
  */
 public interface DataOperator {
 
-    Commit[] getCommits(final Account account);
+    List<Commit> getCommits(final Account account);
 
     void addCommit(final Account account, final Commit commitToAdd);
 
@@ -35,7 +36,7 @@ public interface DataOperator {
 
     boolean isAccountExist(Account account);
 
-    Account[] getAccountsFromList();
+    List<Account> getAllAccounts();
 
     boolean addAccountToAccountList(Account account);
 }
