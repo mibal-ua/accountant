@@ -85,19 +85,22 @@ public class Accountant {
             }
             dataPrinter.printInfoMessage("");
             final String input;
-            dataPrinter.printInfoMessage("If you need to create new account, enter '/add'.");
+            dataPrinter.printInfoMessage("If you need to create/delete new account, enter '/add' or '/delete'.");
             dataPrinter.printInfoMessage("Enter name/index of account");
             input = inputReader.read().trim();
             dataPrinter.clearLines(count + accounts.size());
             if (input.charAt(0) == '/') {
                 if (input.equalsIgnoreCase("/add")) {
-                    count = 7;
                     createNewAccount();
                 }
+                if (input.equalsIgnoreCase("/delete")) {
+                    deleteAccount();
+                }
+                count = 7;
             } else {
                 if (input.length() > 1) {
                     for (final Account account : accounts) {
-                        if (input.equalsIgnoreCase(account.getName())) {
+                        if (input.equals(account.getName())) {
                             return account;
                         }
                     }
@@ -117,6 +120,30 @@ public class Accountant {
                     }
                 }
             }
+        }
+    }
+
+    private void deleteAccount() {
+        Account accountToDelete;
+        String name;
+        dataPrinter.printInfoMessage("Enter name of account you want to delete:");
+        while (true) {
+            name = inputReader.read().trim();
+            dataPrinter.clearLines(2);
+            for (final Account account : accounts) {
+                if (name.equals(account.getName())) {
+                    accountToDelete = account;
+                    if (dataOperator.deleteAccount(accountToDelete)) {
+                        accounts = dataOperator.getAllAccounts();
+                        dataPrinter.printInfoMessage(format("Account '%s' successfully deleted!", name));
+                        return;
+                    } else {
+                        dataPrinter.printErrorMessage("Error with deleting account");
+                    }
+                }
+            }
+            dataPrinter.printInfoMessage(format(
+                "There are no accounts with name '%s'.", name));
         }
     }
 
