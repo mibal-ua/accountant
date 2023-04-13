@@ -25,13 +25,13 @@ import java.util.List;
  */
 public class Accountant {
 
-    List<Account> accounts;
-
     final DataPrinter dataPrinter;
 
     final InputReader inputReader;
 
     final DataOperator dataOperator;
+
+    List<Account> accounts;
 
     public Accountant(final DataPrinter dataPrinter, final InputReader inputReader, final DataOperator dataOperator) {
         this.dataPrinter = dataPrinter;
@@ -41,19 +41,38 @@ public class Accountant {
         accounts = dataOperator.getAllAccounts();
     }
 
+    public Account getCurrentAccount(final Account lastAccount) {
+        if (lastAccount == null) {
+            return getCurrentAccount();
+        }
+        String variant;
+        while (true) {
+            dataPrinter.printInfoMessage("""
+                Enter
+                1 - If you want work with current account
+                2 - If you want to choose another""");
+            variant = inputReader.read().trim();
+            if (variant.equals("1")) {
+                return lastAccount;
+            } else if (variant.equals("2")) {
+                return getCurrentAccount();
+            }
+        }
+    }
+
     public Account getCurrentAccount() {
         Account desiredAccount = null;
         if (accounts == null || accounts.size() == 0) {
             dataPrinter.printInfoMessage("""
-                    There are no accounts. You can create new.
-                    Enter name of a new account:""");
+                There are no accounts. You can create new.
+                Enter name of a new account:""");
             String name;
             while (true) {
                 name = inputReader.read().trim();
                 if (name.length() < 3) {
                     dataPrinter.printInfoMessage("""
-                            Name must contain 3 and more characters.
-                            Enter name:""");
+                        Name must contain 3 and more characters.
+                        Enter name:""");
                 } else {
                     break;
                 }
@@ -64,7 +83,7 @@ public class Accountant {
             boolean isFind = false;
             String name = "";
             while (!isFind) {
-                if(name.equals("")){
+                if (name.equals("")) {
                     dataPrinter.printInfoMessage("Enter name of Account");
                     name = inputReader.read().trim();
                 }
@@ -77,7 +96,8 @@ public class Accountant {
                 }
                 name = "";
                 if (!isFind) {
-                    dataPrinter.printInfoMessage("There are no account with this name. I have the next accounts: " + '\n');
+                    dataPrinter.printInfoMessage(
+                        "There are no account with this name. I have the next accounts: " + '\n');
                     for (final Account account : accounts) {
                         dataPrinter.printInfoMessage(account.getName());
                     }
@@ -113,7 +133,7 @@ public class Accountant {
     }
 
     private void addAccountToAccountList(final Account account) {
-        if(!dataOperator.addAccountToAccountList(account)){
+        if (!dataOperator.addAccountToAccountList(account)) {
             dataPrinter.printErrorMessage("Error with adding account to accountList");
         }
     }

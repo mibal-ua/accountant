@@ -16,10 +16,10 @@
 
 package ua.mibal.accountant.component;
 
-import ua.mibal.accountant.component.console.ConsoleDataPrinter;
-import ua.mibal.accountant.component.console.ConsoleInputReader;
-import ua.mibal.accountant.model.*;
-
+import ua.mibal.accountant.model.GetRequest;
+import ua.mibal.accountant.model.PostRequest;
+import ua.mibal.accountant.model.Request;
+import ua.mibal.accountant.model.RequestMode;
 import static java.lang.String.format;
 import static ua.mibal.accountant.model.RequestMode.ADD;
 import static ua.mibal.accountant.model.RequestMode.GET;
@@ -30,58 +30,40 @@ import static ua.mibal.accountant.model.RequestMode.GET;
  */
 public class RequestMaker {
 
-    final DataPrinter dataPrinter = new ConsoleDataPrinter();
+    private final DataPrinter dataPrinter;
 
-    final InputReader inputReader = new ConsoleInputReader();
+    private final InputReader inputReader;
 
-    final DataOperator dataOperator = new TXTDataOperator();
-
-    final Accountant accountant = new Accountant(dataPrinter, inputReader, dataOperator);
-
-    final String[] args;
-
-    public RequestMaker(final String[] args) {
-        this.args = args;
+    public RequestMaker(final DataPrinter dataPrinter, final InputReader inputReader) {
+        this.dataPrinter = dataPrinter;
+        this.inputReader = inputReader;
     }
 
-    public void make() {
-        dataPrinter.printInfoMessage("You can exit everywhere by the typing '/exit'.");
-        Account account = accountant.getCurrentAccount();
+    public Request make() {
+        RequestMode requestMode;
         while (true) {
-            RequestMode requestMode;
-            if (account.isEmpty()) {
-                requestMode = ADD;
-            } else {
-                while (true) {
-                    dataPrinter.printInfoMessage("Enter what you want: '/get' or '/add'");
-                    String str = inputReader.read();
-                    if (!str.equals("")) {
-                        if (str.charAt(0) == '/') {
-                            str = str.substring(1);
-                            if (ADD.name().equalsIgnoreCase(str) || GET.name().equalsIgnoreCase(str)) {
-                                requestMode = RequestMode.valueOf(str.toUpperCase());
-                                break;
-                            }
-                            if (str.equalsIgnoreCase("other")) {
-                                account = accountant.getCurrentAccount();
-                                if (account.isEmpty()) {
-                                    requestMode = ADD;
-                                    break;
-                                }
-                            }
-                        } else {
-                            dataPrinter.printInfoMessage(format(
-                                    "String '%s' is not command, you must start with '/' char.", str));
-                        }
+            dataPrinter.printInfoMessage("Enter what you want: '/get' or '/add'");
+            String str = inputReader.read();
+            if (!str.equals("")) {
+                if (str.charAt(0) == '/') {
+                    str = str.substring(1);
+                    if (ADD.name().equalsIgnoreCase(str) || GET.name().equalsIgnoreCase(str)) {
+                        requestMode = RequestMode.valueOf(str.toUpperCase());
+                        break;
                     }
+                } else {
+                    dataPrinter.printInfoMessage(format(
+                        "String '%s' is not command, you must start with '/' char.", str));
                 }
             }
-            Request request = switch (requestMode){
-                case GET -> new GetRequest(inputReader, dataPrinter);
-                case ADD -> new PostRequest(inputReader, dataPrinter);
-            };
-            request.make(account);
-            dataPrinter.printInfoMessage("For the choice the another account, enter '/other'.");
         }
+        return make(requestMode);
+    }
+
+    public Request make(final RequestMode requestMode) {
+        return switch (requestMode) {
+            case GET -> new GetRequest(inputReader, dataPrinter);
+            case ADD -> new PostRequest(inputReader, dataPrinter);
+        };
     }
 }

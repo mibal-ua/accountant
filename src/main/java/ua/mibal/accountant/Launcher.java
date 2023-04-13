@@ -26,7 +26,7 @@ import ua.mibal.accountant.component.*;
 public class Launcher {
 
     public static void main(String[] args) {
-        RequestMaker requestMaker = new RequestMaker(args);
-        requestMaker.make();
+        AccountantApplication application = new AccountantApplication();
+        application.start();
     }
 }
