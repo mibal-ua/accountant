@@ -17,6 +17,8 @@
 package ua.mibal.accountant.component;
 
 import ua.mibal.accountant.model.Account;
+import static java.lang.String.format;
+import static ua.mibal.accountant.model.Account.MIN_ACCOUNT_NAME_LENGTH;
 import java.util.List;
 
 /**
@@ -41,99 +43,103 @@ public class Accountant {
         accounts = dataOperator.getAllAccounts();
     }
 
-    public Account getCurrentAccount(final Account lastAccount) {
+    public Account selectAccount(final Account lastAccount) {
         if (lastAccount == null) {
-            return getCurrentAccount();
+            return selectAccount();
         }
         String variant;
+        dataPrinter.printInfoMessage("""
+            Enter:
+            1 - Work with current account
+            2 - Select another""");
         while (true) {
-            dataPrinter.printInfoMessage("""
-                Enter
-                1 - If you want work with current account
-                2 - If you want to choose another""");
             variant = inputReader.read().trim();
             if (variant.equals("1")) {
+                dataPrinter.clearLines(3);
                 return lastAccount;
             } else if (variant.equals("2")) {
-                return getCurrentAccount();
+                dataPrinter.clearLines(3);
+                return selectAccount();
             }
+            dataPrinter.clearLines(1);
         }
     }
 
-    public Account getCurrentAccount() {
-        Account desiredAccount = null;
-        if (accounts == null || accounts.size() == 0) {
-            dataPrinter.printInfoMessage("""
-                There are no accounts. You can create new.
-                Enter name of a new account:""");
-            String name;
-            while (true) {
-                name = inputReader.read().trim();
-                if (name.length() < 3) {
-                    dataPrinter.printInfoMessage("""
-                        Name must contain 3 and more characters.
-                        Enter name:""");
-                } else {
-                    break;
-                }
-            }
-            desiredAccount = new Account(name, dataOperator);
-            addAccountToAccountList(desiredAccount);
-        } else {
-            boolean isFind = false;
-            String name = "";
-            while (!isFind) {
-                if (name.equals("")) {
-                    dataPrinter.printInfoMessage("Enter name of Account");
-                    name = inputReader.read().trim();
-                }
-                for (final Account account : accounts) {
-                    if (name.equals(account.getName())) {
-                        desiredAccount = account;
-                        isFind = true;
-                        break;
-                    }
-                }
-                name = "";
-                if (!isFind) {
-                    dataPrinter.printInfoMessage(
-                        "There are no account with this name. I have the next accounts: " + '\n');
-                    for (final Account account : accounts) {
-                        dataPrinter.printInfoMessage(account.getName());
-                    }
-                    dataPrinter.printInfoMessage('\n' + "If you need to add or create new account, enter '/add'.");
-                    String command = inputReader.read().trim();
-                    if (command.charAt(0) == '/') {
-                        if (command.equalsIgnoreCase("/add")) {
-                            desiredAccount = addNewAccount();
-                            addAccountToAccountList(desiredAccount);
-                            isFind = true;
-                        }
-                    } else {
-                        name = command;
-                    }
-                }
-            }
+    private Account selectAccount() {
+        int clearingCount = 6;
+        if (accounts.size() == 0) {
+            createNewAccount();
+            clearingCount = 7;
         }
-        return desiredAccount;
+        return findAccount(clearingCount);
     }
 
-    private Account addNewAccount() {
-        String name;
+    private Account findAccount(final int clearingCount) {
+        int count = clearingCount;
         while (true) {
-            dataPrinter.printInfoMessage("Enter name of account:");
+            dataPrinter.printInfoMessage("List of accounts:");
+            dataPrinter.printInfoMessage("");
+            for (int i = 0; i < accounts.size(); i++) {
+                dataPrinter.printInfoMessage(
+                    format("%d. %s", i + 1, accounts.get(i).getName()));
+            }
+            dataPrinter.printInfoMessage("");
+            final String input;
+            dataPrinter.printInfoMessage("If you need to create new account, enter '/add'.");
+            dataPrinter.printInfoMessage("Enter name/index of account");
+            input = inputReader.read().trim();
+            dataPrinter.clearLines(count + accounts.size());
+            if (input.charAt(0) == '/') {
+                if (input.equalsIgnoreCase("/add")) {
+                    count = 7;
+                    createNewAccount();
+                }
+            } else {
+                if (input.length() > 1) {
+                    for (final Account account : accounts) {
+                        if (input.equalsIgnoreCase(account.getName())) {
+                            return account;
+                        }
+                    }
+                    dataPrinter.printInfoMessage(format(
+                        "There are no accounts with name '%s'.", input));
+                    count = 7;
+                } else {
+                    if (Character.isDigit(input.charAt(0))) {
+                        final int inputIndex = Integer.parseInt(input);
+                        if (1 <= inputIndex && inputIndex <= accounts.size()) {
+                            return accounts.get(inputIndex - 1);
+                        } else {
+                            dataPrinter.printInfoMessage(format(
+                                "Account with index '%s' does not exists in list.", inputIndex));
+                            count = 7;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void createNewAccount() {
+        String name;
+        dataPrinter.printInfoMessage("Enter name of a new account:");
+        while (true) {
             name = inputReader.read().trim();
-            if (name.length() < 3) {
-                dataPrinter.printInfoMessage("Name must contain 3 and more characters.");
+            dataPrinter.clearLines(2);
+            if (name.length() < MIN_ACCOUNT_NAME_LENGTH) {
+                dataPrinter.printInfoMessage(format(
+                    "Incorrect name '%s', must contain %d and more characters.",
+                    name, MIN_ACCOUNT_NAME_LENGTH
+                ));
             } else {
                 break;
             }
         }
-        return new Account(name, dataOperator);
-    }
-
-    private void addAccountToAccountList(final Account account) {
-        if (!dataOperator.addAccountToAccountList(account)) {
+        final Account account = new Account(name, dataOperator);
+        if (dataOperator.addAccountToAccountList(account)) {
+            accounts = dataOperator.getAllAccounts();
+            dataPrinter.printInfoMessage(format("Account '%s' successfully added!", name));
+        } else {
             dataPrinter.printErrorMessage("Error with adding account to accountList");
         }
     }
