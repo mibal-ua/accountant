@@ -24,6 +24,10 @@ import ua.mibal.accountant.component.DataPrinter;
  */
 public class ConsoleDataPrinter implements DataPrinter {
 
+    private static String GO_TO_PREVIOUS_LINE_ESC = "\033[F";
+
+    private static String CLEAR_CURRENT_LINE_ESC = "\033[2K";
+
     @Override
     public void printInfoMessage(final String message) {
         System.out.println(message);
@@ -32,5 +36,13 @@ public class ConsoleDataPrinter implements DataPrinter {
     @Override
     public void printErrorMessage(final String message) {
         System.err.println(message);
+    }
+
+    @Override
+    public void clearLines(final int count) {
+        for (int i = 0; i < count; i++) {
+            System.out.print(GO_TO_PREVIOUS_LINE_ESC);
+            System.out.print(CLEAR_CURRENT_LINE_ESC);
+        }
     }
 }
